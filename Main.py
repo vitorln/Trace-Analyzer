@@ -5,8 +5,6 @@ import math
 
 def hex2bin(hexdata):
     scale = 16
-    num_of_bits = 8
-
     return bin(int(hexdata, scale))[2:]
 
 def trace_name(path_file):
@@ -22,31 +20,54 @@ def readFile(desloc, path_file):
     return lista
 
 def workingSet(process_list, tam_conjunto):
-    
-    for intervalo in range(tam_conjunto-1, len(process_list)):
-        processaConjunto(process_list[intervalo - (tam_conjunto - 1) : intervalo])
-        
+    conjuntos = {}
+    t = 0
+    for intervalo in range(0, len(process_list), tam_conjunto):
+        conjuntos[t] = processaConjunto(process_list[intervalo : intervalo + tam_conjunto-1])
+        t += 1
+    return conjuntos
+
 def processaConjunto(intervalo):
     paginas_conjunto = []
     for elemento in intervalo:
         if (elemento not in paginas_conjunto):
             paginas_conjunto.append(elemento)
-    print(len(paginas_conjunto))
+    return (len(paginas_conjunto), paginas_conjunto)
 
 
 def main():
     path_file = "traces/gcc.trace.txt"
-    page_size = 16777216 #20 numero pag e 12 desloc
+    page_size = 4096 #20 numero pag e 12 desloc
     desloc = int(math.log2(page_size))
-    tam_conjunto = 10
+    tam_conjunto = 100
     
     process_list = readFile(desloc, path_file)
-    print("Processo", type(process_list[0]))
-    print("Processo", process_list[:10])
-    print("Arquivo: %s" % trace_name(path_file))
-    print("Quantidade de páginas: %s" % len(process_list))
+    conjuntos = workingSet(process_list, tam_conjunto)
+    
+    print("tamanho da pagina: {0}\ntamanho da janela: {1}\n".format(page_size, tam_conjunto))
+    contador_conjuntos = 0
+    contador_falhas = 0
+    lista_falhas = []
+    teste = conjuntos[0]
+    for i in conjuntos:
+        contador_conjuntos += conjuntos[i][0]
+        if (i != 0):
+            for j in conjuntos[i][1]:
+                if (j not in teste[1]):
+                    contador_falhas +=1
+            for j in teste[1]:
+                if (j not in conjuntos[i][1]):
+                    contador_falhas +=1
+            lista_falhas.append(contador_falhas)
+            contador_falhas = 0
+            teste = conjuntos[i]
+    media_conjuntos = contador_conjuntos/len(conjuntos)
+    print("media dos conjuntos: {0}\n\n".format(media_conjuntos))
+    for i in conjuntos:
+        print("ws({0}): tam = {1}\nconjunto: {2}\n\n".format(i, conjuntos[i][0], conjuntos[i][1] ))
+        if i < len(conjuntos)-1:
+            print("diferença entre ws({0}) e ws({1}): {2}\n\n".format(i, i+1, lista_falhas[i]))    
 
-    workingSet(process_list[:100], tam_conjunto)
 
 if __name__ == "__main__":
     main()
