@@ -47,6 +47,7 @@ def main():
     print("tamanho da pagina: {0}\ntamanho da janela: {1}\n".format(page_size, tam_conjunto))
     contador_conjuntos = 0
     contador_falhas = 0
+    contador_falhas_total = 0
     lista_falhas = []
     teste = conjuntos[0]
     for i in conjuntos:
@@ -59,10 +60,12 @@ def main():
                 if (j not in conjuntos[i][1]):
                     contador_falhas +=1
             lista_falhas.append(contador_falhas)
+            contador_falhas_total += contador_falhas
             contador_falhas = 0
             teste = conjuntos[i]
     media_conjuntos = contador_conjuntos/len(conjuntos)
-    print("media dos conjuntos: {0}\n\n".format(media_conjuntos))
+
+    print("media dos conjuntos: {0}\nfalhas totais: {1}\n\n".format(media_conjuntos, contador_falhas_total))
     for i in conjuntos:
         print("ws({0}): tam = {1}\nconjunto: {2}\n\n".format(i, conjuntos[i][0], conjuntos[i][1] ))
         if i < len(conjuntos)-1:
