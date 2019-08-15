@@ -36,10 +36,11 @@ def processaConjunto(intervalo):
 
 
 def main():
-    path_file = "traces/gcc.trace.txt"
+    path_file = "traces/bigone.trace.txt"
+    
     page_size = 4096 #20 numero pag e 12 desloc
     desloc = int(math.log2(page_size))
-    tam_conjunto = 100
+    tam_conjunto = 1000
     
     process_list = readFile(desloc, path_file)
     conjuntos = workingSet(process_list, tam_conjunto)
@@ -65,7 +66,7 @@ def main():
             teste = conjuntos[i]
     media_conjuntos = contador_conjuntos/len(conjuntos)
 
-    print("media dos conjuntos: {0}\nfalhas totais: {1}\n\n".format(media_conjuntos, contador_falhas_total))
+    print("media dos conjuntos: {0}\nmedia de falhas: {1}\n\n".format(media_conjuntos, contador_falhas_total/len(conjuntos)-1))
     for i in conjuntos:
         print("ws({0}): tam = {1}\nconjunto: {2}\n\n".format(i, conjuntos[i][0], conjuntos[i][1] ))
         if i < len(conjuntos)-1:
